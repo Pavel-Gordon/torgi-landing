@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Логи
+*.log
+
+# Python (на случай вспомогательных скриптов)
+__pycache__/
+*.py[cod]
