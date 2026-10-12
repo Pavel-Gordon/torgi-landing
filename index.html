@@ -850,5 +850,72 @@
     </div>
   </footer>
 
+  <!-- TASK 307. Публичная витрина на GitHub Pages.
+       На Pages нет сервера приложения: /pay, /download/* и docs/*.pdf
+       отдают 404. Скрипт включается ТОЛЬКО на *.github.io: помечает такие
+       ссылки как заглушки (href="#" + data-todo) и показывает плашку.
+       На основном домене (torgi21.ru) и локально (:8080) он выходит сразу —
+       поведение лендинга не меняется. Лендинг остаётся статическим,
+       JS существует только ради этого случая. -->
+  <script>
+  (function () {
+    if (window.location.hostname.indexOf("github.io") === -1) return;
+
+    var CONTACT = "pavel.gordon@gmail.com";
+    function isServerLink(href) {
+      if (!href) return false;
+      if (href.indexOf("/pay") === 0) return true;
+      if (href.indexOf("/download/") === 0) return true;
+      if (href.indexOf("docs/") !== -1 && /\.pdf([?#]|$)/i.test(href)) return true;
+      return false;
+    }
+
+    // Плашка «публичная витрина» (фиксированная, снизу — не ломает вёрстку).
+    var banner = document.createElement("div");
+    banner.setAttribute("role", "note");
+    banner.style.cssText =
+      "position:fixed;left:0;right:0;bottom:0;z-index:99999;padding:9px 16px;" +
+      "background:#f0c040;color:#221f10;text-align:center;" +
+      "box-shadow:0 -2px 10px rgba(0,0,0,.35);" +
+      "font:600 14px/1.4 Oswald,'PT Sans',Arial,sans-serif";
+    banner.innerHTML =
+      "Это публичная витрина. Оплата и скачивание — на основном сайте. " +
+      "Связаться: <a style=\"color:#221f10;text-decoration:underline\" href=\"mailto:" +
+      CONTACT + "\">" + CONTACT + "</a>";
+    document.body.appendChild(banner);
+    document.body.style.paddingBottom = "48px";
+
+    // «Серверные» ссылки → заглушки: href="#" + data-todo, пометка «· скоро».
+    var links = document.querySelectorAll("a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var a = links[i];
+      var href = a.getAttribute("href");
+      if (!isServerLink(href)) continue;
+      a.setAttribute("data-todo", href);
+      a.setAttribute("href", "#");
+      a.setAttribute("title", "Доступно на основном сайте");
+      var soon = document.createElement("span");
+      soon.textContent = " · скоро";
+      soon.style.cssText = "opacity:.75;font-size:.85em;white-space:nowrap";
+      a.appendChild(soon);
+    }
+
+    // Клик по заглушке никуда не уводит, а объясняет.
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      while (t && t !== document.body &&
+             !(t.getAttribute && t.getAttribute("data-todo"))) {
+        t = t.parentNode;
+      }
+      if (!t || t === document.body || !t.getAttribute ||
+          !t.getAttribute("data-todo")) return;
+      e.preventDefault();
+      var what = t.getAttribute("data-todo");
+      var lead = what.indexOf("/pay") === 0 ? "Оплата" : "Скачивание";
+      window.alert(lead + " — на основном сайте.\nЭто публичная витрина.\n" +
+                   "Связаться: " + CONTACT);
+    });
+  })();
+  </script>
 </body>
 </html>
