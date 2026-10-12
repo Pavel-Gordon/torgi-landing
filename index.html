@@ -1,0 +1,854 @@
+<!doctype html>
+<!-- Лендинг проекта «Торги» (TASK 8 → v2). Только HTML + CSS: ни одной
+     строчки JS.
+
+     ЧТО ИЗМЕНЕНО В v2 (третий агент, 2026-10-01):
+       * hero — слоган «Законно · Прозрачно · Выгодно»;
+       * новая секция «Как это работает», три шага, стоит сразу за hero;
+       * тарифы — 4 карточки вместо 3: корпоративный вынесен из сноски
+         под блоком в полноценную карточку (grid--4);
+       * FAQ сведено 9 → 5 вопросов, они же перечислены в меню;
+       * подвал — Telegram, Gmail и кнопка «Позвонить» (tel:);
+       * адаптив доведён до 320 px, Oswald вшит в styles.css как data:URI.
+
+     ОПЛАТА (TASK 9, подключено): каждая кнопка-CTA ведёт на сервер
+       payment.py — GET /pay?tariff=monitor|sniper|partner, а форма в
+       Контактах — на GET /subscribe. Сервер вставляет подтверждение в
+       плейсхолдер PAYMENT_BANNER. Без сервера (просто открыть файл)
+       ссылки ведут в никуда — лендинг статический, JS по-прежнему нет.
+
+       Корпоративный тариф СПЕЦИАЛЬНО ведёт на #kontakty, а не на
+       /pay?tariff=corporate: такого тарифа нет в payment.py:TARIFFS, и
+       сервер на незнакомый tariff отдал бы страницу с ошибкой. Когда
+       тариф добавят в TARIFFS — ссылку можно поменять на /pay.
+
+     ФАКТЫ: цифры взяты из базы (1 989 лотов) и констант app.py
+       (PARTNER_FEE_LEAD 3 %, PARTNER_FEE_DEAL 5 %, PARTNER_PRICE_WL
+       30 000 ₽/мес, PARTNER_PRICE_CLUB 9 900 ₽/мес), тарифы — ТЗ TASK 8.
+
+     ЧЕРНОВИК: отзывы ниже — заглушки, заменить на реальные (с разрешения).
+       Контакты в подвале рабочие: @pavelgord77,
+       pavel.gordon@gmail.com, +7 906 388-00-44. Заглушки убраны.
+       При смене контактов править и здесь, и в TARGETS файла
+       docs/make_qr.py — код в футере вшит в разметку вектором.
+       Пароль Gmail из config.json публиковать нельзя. -->
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Торги на понижение — лоты банкротных торгов в Чувашии, Марий Эл и Татарстане</title>
+  <meta name="description" content="Мониторинг торгов по банкротству в трёх регионах России. Около 1 500 активных лотов, обновление каждые 5 минут, дедлайны, уведомления о падении цены и выгрузка в таблицы. От 1 490 ₽/мес.">
+  <!-- og-теги: без них ссылка в Telegram или VK показывается пустой
+       карточкой — только заголовок файла и адрес сайта -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Торги на понижение — лоты банкротных торгов на 20–40 % ниже рынка">
+  <meta property="og:description" content="Чувашия, Марий Эл, Татарстан: проверка документов, дедлайны и уведомление о падении цены. От 1 490 ₽/мес.">
+  <meta name="theme-color" content="#1a1c14">
+  <!-- иконка вкладки инлайном: маршрута /favicon.ico на сервере
+       нет (payment.py отдаёт только /styles.css, /download/, /
+       и служебные пути) — ссылка на файл дала бы 404. Сам файл
+       favicon.ico лежит рядом, для PDF и дистрибутива. -->
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByb2xlPSJpbWciIGFyaWEtbGFiZWw9ItCiIj4KICA8cmVjdCBjbGFzcz0ibG9nb19fbWFya2JnIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjYxIiBoZWlnaHQ9IjYxIiByeD0iMTQiCiAgICAgICAgZmlsbD0iIzBhMGEwYSIgc3Ryb2tlPSIjZmZjYzAwIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cGF0aCBmaWxsPSIjZmZjYzAwIiBkPSJNIDEyIDE1IGggNDAgdiA5IGggLTE1LjUgdiAyNSBoIC05IHYgLTI1IGggLTE1LjUgeiIvPgo8L3N2Zz4K">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body id="top">
+
+  <header class="header">
+    <div class="shell header__row">
+      <!-- ЛОГОТИП (2026-10-01, SVG): инлайн, потому что маршрута
+           /logo.svg на сервере нет. Файлы logo.svg, logo_icon.svg,
+           favicon.ico и logo_1024.png — рядом, для PDF и сборки. -->
+      <a class="logo" href="#top">
+        <svg class="logo__svg" viewBox="0 0 228 80" role="img" aria-label="Торги на понижение" xmlns="http://www.w3.org/2000/svg">
+  
+          <g transform="translate(8 8)">
+          <rect class="logo__markbg" x="1.5" y="1.5" width="61" height="61" rx="14"
+                fill="none" stroke="#ffcc00" stroke-width="3"/>
+          <path fill="#ffcc00" d="M 12 15 h 40 v 9 h -15.5 v 25 h -9 v -25 h -15.5 z"/>
+          </g>
+          <g font-family="Oswald, 'Arial Narrow', Arial, sans-serif">
+            <text x="94" y="50" font-size="38" font-weight="700" fill="#ffcc00" letter-spacing="0.4">Торги</text>
+            <text x="95" y="69" font-size="12.5" font-weight="300" fill="#8a8f70" letter-spacing="3.1">НА ПОНИЖЕНИЕ</text>
+          </g>
+        </svg>
+      </a>
+
+      <nav class="nav" aria-label="Разделы страницы">
+        <a href="#kak-rabotaet">Как это работает</a>
+        <a href="#kejs">Кейс</a>
+        <a href="#chto-eto">Что это</a>
+        <a href="#tarify">Тарифы</a>
+        <a href="#skachat">Скачать</a>
+        <a href="#materialy">Материалы</a>
+        <a href="#faq">Вопросы</a>
+        <a href="#kontakty">Контакты</a>
+      </nav>
+
+      <!-- оплата: GET /pay?tariff=monitor (payment.py, TASK 9) -->
+      <a class="btn btn--gold header__cta" href="/pay?tariff=monitor" data-tariff="monitor">1 490 ₽/мес</a>
+    </div>
+  </header>
+
+  <!-- PAYMENT_BANNER: payment.py сюда вставляет подтверждение оплаты или
+       заявки (строковая подстановка на сервере — JS в проекте нет).
+       Без сервера на месте плейсхолдера остаётся пустой комментарий. -->
+  <!-- PAYMENT_BANNER -->
+
+  <main>
+
+    <!-- ============================== HERO -->
+    <section class="hero">
+      <div class="shell">
+        <p class="eyebrow">Чувашия · Марий Эл · Татарстан</p>
+        <!-- Слоган v2: три проверяемых обещания. «Законно» — ФЗ-127,
+             «прозрачно» — публичные торги с документами, «выгодно» —
+             цифра ниже. Порядок именно такой, а не случайный: законность
+             снимает первый барьер, выгода интересует третьим словом. -->
+        <p class="slogan">
+          <span>Законно</span><span>Прозрачно</span><span>Выгодно</span>
+        </p>
+        <!-- формулировка дословно из PARTNER_SCRIPTS app.py
+             «идут с торгов на 20–40% ниже рынка» — маркетинговую цифру
+             не выдумываем, берём ту же, что видит партнёр в кабинете.
+             В базе нет рыночных цен, поэтому 20–40 % — оценка сделки,
+             а не измеренная статистика по лотам; оговорка стоит в FAQ. -->
+        <h1 class="hero__title">Лоты банкротных торгов<br>на&nbsp;<span class="accent">20–40&nbsp;%</span> ниже рынка</h1>
+        <p class="hero__lead">
+          Мы находим торги по трём регионам, проверяем документы и присылаем
+          лоты с дедлайном — каждое утро, пока цену ещё не разогнали
+          конкуренты.
+        </p>
+
+        <div class="hero__actions">
+          <!-- оплата: GET /pay?tariff=monitor (payment.py, TASK 9) -->
+          <a class="btn btn--gold btn--lg" href="/pay?tariff=monitor" data-tariff="monitor">
+            Включить монитор — 1 490 ₽/мес
+          </a>
+          <a class="btn btn--ghost btn--lg" href="#kak-rabotaet">Как это работает</a>
+        </div>
+
+        <ul class="chips">
+          <li>Обновление каждые 5 минут</li>
+          <li>Фото, кадастровый номер и карта</li>
+          <li>Уведомление, когда цена падает</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================== КАК ЭТО РАБОТАЕТ -->
+    <!-- Три шага по факту пайплайна: список лотов → проверка документов
+         → сопровождение сделки. Порядок совпадает с шагами в tasks.md
+         (fetch_api → enrich_lots → refetch), чтобы обещание на странице
+         и работа приложения описывались одними словами. -->
+    <section id="kak-rabotaet" class="section section--alt">
+      <div class="shell">
+        <p class="eyebrow">Как это работает</p>
+        <h2 class="section__title">Три шага от публикации торга до ключей</h2>
+        <p class="section__lead">
+          Ничего из этого не нужно делать руками. Подписка начинается с
+          первого шага — дальше вы только принимаете решение по лоту.
+        </p>
+
+        <div class="grid steps grid--3">
+          <article class="step">
+            <h3 class="step__title">Находим лоты</h3>
+            <p class="step__text">
+              Каждые 5 минут обходим Федресурс, Т-Банкрот и площадки
+              по трём регионам. Всё новое появляется в таблице в тот же
+              день — вместе с кадастровым номером, фото и ценой за метр.
+            </p>
+          </article>
+
+          <article class="step">
+            <h3 class="step__title">Проверяем документы</h3>
+            <p class="step__text">
+              По каждому лоту смотрим выписку ЕГРН, аресты, доли и
+              обременения. Отдельной строкой в таблице помечаем то, что
+              может сорвать сделку: долю в праве, залог, сельхоз землю.
+            </p>
+          </article>
+
+          <article class="step">
+            <h3 class="step__title">Ведём до сделки</h3>
+            <p class="step__text">
+              Присылаем сигнал, когда цена падает, и ведём срок до дедлайна.
+              На тарифе «Снайпер» подаём заявку и вносим задаток под вашим
+              контролем — вплоть до подписи.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== СКАЧАТЬ -->
+    <!-- Кнопки ведут на /download/Торги.dmg и /download/Торги.exe.
+         Файлов в сборке пока нет (spec собирает .app под macOS), поэтому
+         payment.py отдаёт страницу «сборка готовится» вместо 404 и файл,
+         когда он появится в dist/. Ссылки менять не придётся. -->
+    <section id="skachat" class="section">
+      <div class="shell shell--narrow">
+        <p class="eyebrow">Приложение</p>
+        <h2 class="section__title">Скачать приложение</h2>
+        <p class="section__lead">
+          Тот же подборщик, что на странице, но офлайн: дедлайны, документы
+          и кадастровый номер лота, карта и уведомление, когда цена падает.
+        </p>
+
+        <div class="hero__actions">
+          <a class="btn btn--gold btn--lg" href="/download/Торги.dmg">Скачать приложение для Mac</a>
+          <a class="btn btn--ghost btn--lg" href="/download/Торги.exe">Скачать для Windows</a>
+        </div>
+
+        <p class="note">
+          macOS 12 и новее, Windows 10 и новее. Установка одним файлом,
+          без администраторских прав — архив разархивируется и запускается.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================== ЧТО ЭТО -->
+    <section id="chto-eto" class="section">
+      <div class="shell">
+        <p class="eyebrow">Что это</p>
+        <h2 class="section__title">Подборщик, который не спит между сделками</h2>
+        <p class="section__lead">
+          Торги по банкротству — публичные: имущество должника продают
+          с шагом вниз, а не с рук на руки. Проблема не в законе, а в том,
+          что лотов много, дедлайн короткий, а проверить каждый вручную
+          некогда. Это и закрывает сервис.
+        </p>
+
+        <div class="grid grid--3">
+          <article class="card">
+            <h3 class="card__title">Каждые 5 минут</h3>
+            <p class="card__text">
+              Цикл проверки падающих лотов — 5 минут (HOT_INTERVAL в
+              hot_watcher.py). Новый лот попадает в подборку в тот же день,
+              а не в следующую неделю.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3 class="card__title">Три региона</h3>
+            <p class="card__text">
+              Чувашия, Марий Эл и Татарстан — около 1 500 активных лотов
+              в одном месте, с фильтром по району и типу объекта.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3 class="card__title">Дедлайн на виду</h3>
+            <p class="card__text">
+              По каждому лоту — дата окончания приёма заявок. Опоздать
+              дороже, чем не успеть: задаток вносят в тот же срок.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3 class="card__title">Падение цены — сигнал</h3>
+            <p class="card__text">
+              Лот подешевел — приходит уведомление. Это шанс подать заявку
+              дешевле, чем вчерашние конкуренты.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3 class="card__title">Документы проверены</h3>
+            <p class="card__text">
+              Выписка ЕГРН, аресты, доли и обременения: по каждому лоту
+              вывод письмом, а не «разбирайтесь сами».
+            </p>
+          </article>
+
+          <article class="card">
+            <h3 class="card__title">Выгрузка куда удобно</h3>
+            <p class="card__text">
+              CSV, XLSX и Google Sheets: колонки под ваш сценарий, таблица
+              готова к отправке клиенту или партнёру.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== КЕЙС
+         Реальный лот из dist/torgi.db на 03.10.2026, кадастр
+         21:01:000000:55967, «Аукционы Сибири»/Tender Technologies.
+         Цены и сроки берутся из базы и меняются при каждом парсинге —
+         поэтому кейс помечен датой. Выдумывать «историю сделки» нельзя:
+         лот ещё в процедуре, показан ход цены, а не исход. -->
+    <section id="kejs" class="section">
+      <div class="shell">
+        <p class="eyebrow">Кейс из подборки</p>
+        <h2 class="section__title">Что видно по цене одного лота</h2>
+        <p class="section__lead">
+          Публичное предложение по магистральной тепловой сети в Чебоксарах.
+          Лот открыт, цена за два месяца упала вдвое — и это ещё не минимум.
+        </p>
+
+        <div class="case">
+          <div class="case__head">
+            <div>
+              <p class="case__name">Тепловая сеть ТК-46А-5А, ЖК «Восточный экспресс»</p>
+              <p class="case__addr">
+                г. Чебоксары, Марпосадское шоссе · кадастр 21:01:000000:55967 ·
+                2 552 м сети, площадь застройки 85,6 м²
+              </p>
+            </div>
+            <p class="case__stamp">данные на 03.10.2026</p>
+          </div>
+
+          <div class="case__prices">
+            <div class="case__price">
+              <span class="case__price-label">Старт</span>
+              <span class="case__price-value">3 423 070 ₽</span>
+            </div>
+            <div class="case__price case__price--now">
+              <span class="case__price-label">Сейчас</span>
+              <span class="case__price-value">1 711 535 ₽</span>
+              <span class="case__price-diff">−50 %</span>
+            </div>
+            <div class="case__price">
+              <span class="case__price-label">Минимум</span>
+              <span class="case__price-value">1 026 921 ₽</span>
+              <span class="case__price-diff">−70 %</span>
+            </div>
+          </div>
+
+          <dl class="case__facts">
+            <div><dt>Задаток</dt><dd>342 307 ₽ — 10 % от старта</dd></div>
+            <div><dt>Приём заявок</dt><dd>до 12 октября, 18:00</dd></div>
+            <div><dt>Этап</dt><dd>до 3 октября, 10:00</dd></div>
+            <div><dt>Площадка</dt><dd>Tender Technologies</dd></div>
+          </dl>
+
+          <p class="case__caveat">
+            Лот ещё не продан: −50 % показывает ход цены по процедуре,
+            −70 % — нижнюю границу, до которой может дойти торг. Итог
+            зависит от того, кто ещё подаст заявку.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== ЦИФРЫ -->
+    <section class="numbers" aria-label="Сервис в цифрах">
+      <div class="shell numbers__row">
+        <div class="stat"><span class="stat__value">3</span><span class="stat__label">региона</span></div>
+        <!-- «около 1 500» вместо точного числа: срез быстро устаревает.
+             Проверено 08.10.2026 в torgi.db: 1 610 активных (1 714 всего),
+             из них 1 485 — по ИНН 16/21/12 (три заявленных региона,
+             substr(inn,1,2)). «~1 500» = стабильная нижняя оценка,
+             не претендует на точность. -->
+        <div class="stat"><span class="stat__value">~1 500</span><span class="stat__label">активных лотов в трёх регионах</span></div>
+        <div class="stat"><span class="stat__value">5</span><span class="stat__label">минут до обновления</span></div>
+        <div class="stat"><span class="stat__value">1 490 ₽</span><span class="stat__label">в месяц, без процентов</span></div>
+      </div>
+    </section>
+
+    <!-- ============================== ТАРИФЫ -->
+    <section id="tarify" class="section">
+      <div class="shell">
+        <p class="eyebrow">Тарифы</p>
+        <h2 class="section__title">Четыре способа работать с торгами</h2>
+        <p class="section__lead">
+          Подписка, процент от сделки или доступ под своим брендом —
+          выбирайте по тому, как вы участвуете. Первый месяц по «Монитору»
+          можно взять и отменить, ни к чему не привязываясь.
+        </p>
+
+        <!-- Четыре карточки вместо трёх: корпоративный тариф вынесен из
+             сноски под блоком в полноценную карточку. Раньше он был
+             спрятан в .note и на телефоне просто не попадал на первый
+             экран — а это единственный тариф с предсказуемым доходом
+             для агентства. -->
+        <div class="grid grid--4">
+          <article class="plan plan--featured">
+            <p class="plan__tag">Популярный</p>
+            <h3 class="plan__name">Монитор</h3>
+            <p class="plan__price">1 490 ₽<span>/мес</span></p>
+            <p class="plan__note">Доступ к таблице, фильтры, Excel</p>
+            <ul class="plan__list">
+              <li>Подборка новых лотов каждое утро</li>
+              <li>Дедлайны и уведомление о падении цены</li>
+              <li>Фильтры: регион, тип объекта, цена, срочность</li>
+              <li>Выгрузка в Excel, CSV и Google Sheets</li>
+            </ul>
+            <!-- оплата: GET /pay?tariff=monitor (payment.py, TASK 9) -->
+            <a class="btn btn--gold btn--block" href="/pay?tariff=monitor" data-tariff="monitor">Включить монитор</a>
+          </article>
+
+          <article class="plan">
+            <h3 class="plan__name">Снайпер</h3>
+            <p class="plan__price">5 %<span>от сделки</span></p>
+            <p class="plan__note">Монитор плюс сопровождение</p>
+            <ul class="plan__list">
+              <li>Всё из «Монитора»</li>
+              <li>Разбор лота: почему дешёвый и что проверить</li>
+              <li>Заявка и задаток — под контролем до подписи</li>
+              <li>Платите только за закрытую сделку</li>
+            </ul>
+            <!-- заявка: GET /pay?tariff=sniper → subscriptions, status=application -->
+            <a class="btn btn--ghost btn--block" href="/pay?tariff=sniper" data-tariff="sniper">Запросить расчёт</a>
+          </article>
+
+          <article class="plan">
+            <h3 class="plan__name">Партнёр</h3>
+            <p class="plan__price">3 %<span>от сделки</span></p>
+            <p class="plan__note">Для риелторов, плюс скрипты продаж</p>
+            <ul class="plan__list">
+              <li>Ссылка с кодом и статистика в кабинете</li>
+              <li>Клиент переходит — вы ведёте его сами</li>
+              <li>Готовые скрипты: первый контакт и 5 возражений</li>
+              <li>Статусы: в поиске → в сделке → закрыт</li>
+            </ul>
+            <!-- заявка: GET /pay?tariff=partner → subscriptions, status=application -->
+            <a class="btn btn--ghost btn--block" href="/pay?tariff=partner" data-tariff="partner">Стать партнёром</a>
+          </article>
+
+          <!-- Корпоративный: заявка, а не оплата картой. Условия зависят
+               от числа клиентов агентства, поэтому цена показана как
+               валовая («от 30 000 ₽/мес») и всегда обсуждается.
+               Ссылка ведёт на форму заявки, а не на /pay: платёжный
+               сервер не знает этого тарифа (payment.py:TARIFFS), и
+               пришлось бы платить по фиктивной квитанции. -->
+          <article class="plan">
+            <h3 class="plan__name">Корпоративный</h3>
+            <p class="plan__price">30 000 ₽<span>/мес</span></p>
+            <p class="plan__note">White-label под вашим брендом и API</p>
+            <ul class="plan__list">
+              <li>Приложение под логотипом и цветами агентства</li>
+              <li>Ваш домен и почта в письмах клиентам</li>
+              <li>Доступ к API: лоты отдаём в вашу CRM</li>
+              <li>Скрипты, обучение сотрудников, приоритетная поддержка</li>
+            </ul>
+            <a class="btn btn--ghost btn--block" href="#kontakty">Обсудить условия</a>
+          </article>
+        </div>
+
+        <!-- Сколько приносит партнёрский тариф. Таблица, а не калькулятор
+             с полем ввода: на лендинге нет JS, а «живая» сумма на глаз
+             всегда поймает вопрос «а от какой цены считать». Три
+             суммы — арифметика 3 % от суммы сделки (15 000 / 30 000 /
+             90 000 ₽), ничего не спрогнозировано. -->
+        <h3 class="subhead">Сколько приносит партнёрский тариф</h3>
+        <table class="earn">
+          <caption class="earn__caption">
+            3 % от суммы сделки. Считается от итоговой цены, по которой
+            лот ушёл, а не от стартовой.
+          </caption>
+          <thead>
+            <tr><th scope="col">Сделка на</th><th scope="col">Ваш доход</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>500 000 ₽</td><td>15 000 ₽</td></tr>
+            <tr><td>1 000 000 ₽</td><td>30 000 ₽</td></tr>
+            <tr><td>3 000 000 ₽</td><td>90 000 ₽</td></tr>
+          </tbody>
+        </table>
+        <p class="earn__note">
+          Три примера, а не обещание: сумма зависит от цены сделки и того,
+          сколько клиентов вы привели. Процент начисляется после закрытия
+          сделки, предоплаты нет.
+        </p>
+
+        <p class="note">
+          Тарифы «Снайпер» и «Партнёр» оплачиваются после сделки — процент
+          начисляется на закрытую сумму. Отдельно доступен закрытый клуб
+          инвесторов — 9 900 ₽/мес: горячие лоты за 24 часа до публикации,
+          разборы сделок и чат. Условия присылаем по запросу.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================== ОТЗЫВЫ -->
+    <!-- Вымышленные отзывы-плейсхолдеры с выдуманными именами убраны
+         (TASK 146): выглядят как реальные, а согласий на публикацию нет.
+         Секция остаётся с честной формулировкой и наполнится после
+         первых сделок. -->
+    <section id="otzyvy" class="section section--alt">
+      <div class="shell">
+        <p class="eyebrow">Отзывы</p>
+        <h2 class="section__title">Отзывы появятся после первых сделок</h2>
+        <p class="note">
+          Следите за первыми сделками в Telegram-канале. Публикуем настоящие
+          отзывы, только с согласия авторов:
+          <a href="https://t.me/pavelgord77">@pavelgord77</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================== FAQ -->
+    <!-- v2: 9 вопросов сведены до 5. Почему так: половина старых
+         вопросов отвечала на одну и ту же мысль разными словами
+         («Что входит в тариф» = «Сколько стоит» + «Чем Снайпер отличается»),
+         а на телефоне 9 свёрнутых блоков занимают весь первый экран и
+         вопрос «Сколько стоит» не доходит до начала страницы.
+         Оставлены ровно те пять, что спрашивают чаще всего, и каждый
+         отвечает по существу, а не отсылкой к другому пункту. -->
+    <section id="faq" class="section">
+      <div class="shell shell--narrow">
+        <p class="eyebrow">Вопросы</p>
+        <h2 class="section__title">Частые вопросы</h2>
+
+        <!-- Нативный <details>: раскрывается без JavaScript -->
+        <details class="faq" open>
+          <summary>Сколько стоит?</summary>
+          <p>
+            «Монитор» — 1 490 ₽/мес за доступ к таблице, фильтры и выгрузку
+            в Excel: это подписка без процента от сделки. «Снайпер» — 5 %
+            от закрытой сделки, платите только за результат. «Партнёр» — 3 %
+            за приведённого клиента, если ведёте сделку сами. Корпоративный
+            под запросу — от 30 000 ₽/мес, это white-label под брендом
+            агентства плюс доступ к API.
+          </p>
+        </details>
+
+        <details class="faq">
+          <summary>Как оплатить?</summary>
+          <p>
+            По карте или через СБП на защищённой странице провайдера — данные
+            карты мы не видим и не храним. Доступ открывается сразу после
+            подтверждения, чек приходит на ту же почту. Тарифы «Снайпер» и
+            «Партнёр» предоплаты не требуют: договор и оплата — после
+            закрытия сделки.
+          </p>
+        </details>
+
+        <details class="faq">
+          <summary>Можно ли отменить?</summary>
+          <p>
+            Да, помесячно и без штрафов: не продлеваете — доступ заканчивается
+            в конце оплаченного периода, выгрузки за это время остаются
+            у вас. Если в оплаченные дни сервис не работал — напишите, вернём
+            деньги за неотработанные. Корпоративный тариф — по договору,
+            там же порядок расторжения.
+          </p>
+        </details>
+
+        <details class="faq">
+          <summary>Какие регионы?</summary>
+          <p>
+            Чувашия, Марий Эл и Татарстан — около 1 500 активных лотов,
+            фильтр по региону и району в один клик. Сейчас подробно
+            отбираем лоты по Чувашии, остальные два региона приходят
+            общим потоком: проверьте фильтр, прежде чем считать
+            подборку под свой район.
+          </p>
+        </details>
+
+        <details class="faq">
+          <summary>Чем вы лучше конкурентов?</summary>
+          <p>
+            Тем, что мы не продаём доступ к площадке, а делаем работу за
+            клиента: собираем лоты с трёх регионов в одной таблице, проверяем
+            по каждому выписку, аресты и доли, ставим рядом с ценой метр
+            и считаем, где именно лот дешёвый. Конкуренты либо показывают
+            чужую выгрузку, либо берут процент с клиента без проверки
+            документов. Мы законны: торги открыты по ФЗ-127, а подписка
+            и процент — всё, что указано в тарифах.
+          </p>
+        </details>
+
+        <!-- Оговорка к «20–40 % ниже рынка» из заголовка. Рыночных цен
+             в базе нет — ни сравнения с объявлениями, ни истории сделок,
+             поэтому цифру нельзя назвать измеренной статистикой. Дисконт
+             считается от стартовой цены лота, а не от рынка. -->
+        <details class="faq">
+          <summary>Откуда цифра «20–40 % ниже рынка»?</summary>
+          <p>
+            Это оценка по начальной цене лотов на наших площадках, а не
+            сравнение с рынком недвижимости: в базе нет данных о проданных
+            по той же цене объектах. На торгах стартовая цена обычно
+            занижена относительно рынка, а торг опускает её ещё ниже —
+            поэтому обе цифры стоит считать верхней границей скидки.
+            Точную доходность по конкретному объекту считаем по документам,
+            до подачи заявки.
+          </p>
+        </details>
+      </div>
+    </section>
+
+<!-- ============================== МАТЕРИАЛЫ (TASK 75, дополнено TASK 74) -->
+    <!-- PDF для тех, кто ещё не подписан: лендинг продаёт подписку,
+         а эти файлы отвечают на вопрос «а что вообще можно скачать».
+         Сетка из шести карточек — материалы TASK 74; проектные документы
+         (брошюра, скрипты, онбординг, маркетинговый план, сообщение для
+         рассылки) вынесены списком ниже, чтобы ничего из прежнего набора
+         не пропало с лендинга.
+
+         Ссылка относительная (../docs/…) — лендинг отдаётся payment.py
+         с корня, и абсолютный /docs/... на живом сервере даёт 404: там
+         маршрут только /download/<имя>, а имя файла ещё не в
+         DOWNLOAD_FILES (payment.py не трогаем). Относительный путь
+         работает при открытии файла и при статическом сервере на корень
+         проекта. Размеры и число страниц — реальные, `ls -l` и pymupdf
+         на 3 октября 2026, после сборки PDF из docs/marketing/*.md. -->
+    <section id="materialy" class="section section--alt">
+      <div class="shell">
+        <p class="eyebrow">Материалы</p>
+        <h2 class="section__title">Скачайте бесплатно</h2>
+        <p class="section__lead">
+          Шесть готовых комплектов для тех, кто ещё не подписан: посты на
+          месяц, письма, видео, календарь публикаций и разбор лота. Плюс
+          проектные документы ниже. Без регистрации и без адреса почты —
+          скачивайте и работайте.
+        </p>
+
+        <div class="grid grid--3 dl-grid">
+
+          <article class="dl">
+            <p class="dl__icon" aria-hidden="true">📅</p>
+            <h3 class="dl__title">30 постов на месяц</h3>
+            <p class="dl__text">
+              Готовые посты на четыре недели: знакомство, кейсы, обучение,
+              топ лотов. С расчётом выгоды по реальным лотам.
+            </p>
+            <p class="dl__meta">PDF · 21 страница · 669 КБ</p>
+            <a class="btn btn--gold btn--block" href="../docs/marketing/Посты_30_дней.pdf"
+               download>Скачать PDF</a>
+          </article>
+
+          <article class="dl">
+            <p class="dl__icon" aria-hidden="true">✉️</p>
+            <h3 class="dl__title">Серия из 10 писем</h3>
+            <p class="dl__text">
+              Письма по триггеру: от первого ответа до тридцатого дня.
+              Тексты готовы к отправке, подставляется только имя.
+            </p>
+            <p class="dl__meta">PDF · 6 страниц · 601 КБ</p>
+            <a class="btn btn--gold btn--block" href="../docs/marketing/Email_серия.pdf"
+               download>Скачать PDF</a>
+          </article>
+
+          <article class="dl">
+            <p class="dl__icon" aria-hidden="true">🎬</p>
+            <h3 class="dl__title">5 сценариев видео</h3>
+            <p class="dl__text">
+              Ролики на 45–90 секунд: раскадровка по секундам, текст озвучки,
+              источники кадров и музыки.
+            </p>
+            <p class="dl__meta">PDF · 6 страниц · 605 КБ</p>
+            <a class="btn btn--gold btn--block" href="../docs/marketing/Видео_сценарии.pdf"
+               download>Скачать PDF</a>
+          </article>
+
+          <article class="dl">
+            <p class="dl__icon" aria-hidden="true">🗓</p>
+            <h3 class="dl__title">Календарь публикаций</h3>
+            <p class="dl__text">
+              30 дней по каналам: что выходит в какой день, кто готовит,
+              что проверять перед публикацией.
+            </p>
+            <p class="dl__meta">PDF · 7 страниц · 606 КБ</p>
+            <a class="btn btn--gold btn--block" href="../docs/marketing/Календарь_на_месяц.pdf"
+               download>Скачать PDF</a>
+          </article>
+
+          <article class="dl">
+            <p class="dl__icon" aria-hidden="true">📋</p>
+            <h3 class="dl__title">10 постов для канала</h3>
+            <p class="dl__text">
+              Короткий набор для старта: десять постов о лотах месяца,
+              которые можно выложить за один вечер.
+            </p>
+            <p class="dl__meta">PDF · 13 страниц · 636 КБ</p>
+            <a class="btn btn--gold btn--block" href="../docs/marketing/10_постов_в_канал.pdf"
+               download>Скачать PDF</a>
+          </article>
+
+          <article class="dl">
+            <p class="dl__icon" aria-hidden="true">📊</p>
+            <h3 class="dl__title">Разбор лота</h3>
+            <p class="dl__text">
+              Пошаговый разбор одного лота для клиента — на реальном
+              примере, с цифрами и пометками рисков.
+            </p>
+            <p class="dl__meta">PDF · 9 страниц · 626 КБ</p>
+            <a class="btn btn--gold btn--block" href="../docs/marketing/Первый_разбор_лота.pdf"
+               download>Скачать PDF</a>
+          </article>
+
+        </div>
+
+        <p class="note">
+          Документы бесплатные и без watermarks. Тарифы нужны для живой таблицы
+          лотов с фильтрами, выгрузкой и уведомлениями о падении цены.
+        </p>
+
+        <!-- Проектные документы: в сетку выше не влезают, но убирать их
+             нельзя — по ним лендинг и был полезен до TASK 74. Отдельным
+             списком, а не шестью карточками: иначе пришлось бы выбрать
+             шесть из одиннадцати и убрать из продажи половину. -->
+        <h3 class="subhead">Проектные документы</h3>
+        <ul class="dl-row">
+          <li>
+            <a href="../docs/pdf_brochure.pdf" download>Брошюра о проекте</a>
+            <span class="dl-row__meta">PDF · 12 страниц · 677 КБ</span>
+          </li>
+          <li>
+            <a href="../docs/Скрипты_риелтора.pdf" download>Скрипты для риелтора</a>
+            <span class="dl-row__meta">PDF · 7 страниц · 607 КБ</span>
+          </li>
+          <li>
+            <a href="../docs/Онбординг_партнёра.pdf" download>Онбординг партнёра</a>
+            <span class="dl-row__meta">PDF · 9 страниц · 614 КБ</span>
+          </li>
+          <li>
+            <a href="../docs/marketing/Маркетинг_контент.pdf" download>Маркетинговый план</a>
+            <span class="dl-row__meta">PDF · 12 страниц · 630 КБ</span>
+          </li>
+          <li>
+            <a href="../docs/marketing/Сообщение_для_рассылки.pdf" download>Сообщение для рассылки в WhatsApp</a>
+            <span class="dl-row__meta">PDF · 5 страниц · 599 КБ</span>
+          </li>
+        </ul>
+
+        <!-- ============================== QR -->
+        <!-- Коды вставлены из docs/marketing/qr/*.svg (docs/make_qr.py):
+             payment.py не раздаёт произвольные статические файлы, поэтому
+             картинку по <img src> лендинг не отдаст — вектор встроен
+             прямо в разметку. Файл читается целиком на каждый запрос,
+             поэтому SVG собран одним <path> с объединёнными модулями:
+             4 КБ вместо 23 КБ у готовой фабрики qrcode.
+             Адреса site и partner — torgi21.ru (домен выбран, но ещё
+             не куплен), см. TARGETS в docs/make_qr.py. Менять адрес в
+             HTML руками не надо:
+             правка TARGETS и повторный запуск скрипта с --inject.
+             Блоки вставлены по порядку TARGETS и обёрнуты постоянными
+             маркерами <!-- QR:key --> … <!-- /QR:key -->: повторный
+             --inject перезаписывает код на месте, а не копит дубли. -->
+        <h3 class="subhead">Отсканируйте — откроется с телефона</h3>
+        <ul class="qr-row">
+          <li class="qr">
+            <!-- QR:site -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" width="132" height="132" shape-rendering="crispEdges" role="img" aria-label="QR-код: https://torgi21.ru/">
+            <rect width="37" height="37" fill="#ffffff"/><path d="M4 4h7v1h-7zM12 4h1v1h-1zM14 4h1v1h-1zM16 4h2v1h-2zM19 4h1v1h-1zM26 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM12 5h2v1h-2zM16 5h1v1h-1zM20 5h3v1h-3zM24 5h1v1h-1zM26 5h1v1h-1zM32 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM12 6h1v1h-1zM15 6h2v1h-2zM18 6h1v1h-1zM22 6h1v1h-1zM26 6h1v1h-1zM28 6h3v1h-3zM32 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM16 7h1v1h-1zM19 7h1v1h-1zM21 7h1v1h-1zM24 7h1v1h-1zM26 7h1v1h-1zM28 7h3v1h-3zM32 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM13 8h3v1h-3zM17 8h1v1h-1zM19 8h1v1h-1zM21 8h4v1h-4zM26 8h1v1h-1zM28 8h3v1h-3zM32 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM12 9h2v1h-2zM15 9h2v1h-2zM18 9h1v1h-1zM21 9h1v1h-1zM24 9h1v1h-1zM26 9h1v1h-1zM32 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h7v1h-7zM12 11h2v1h-2zM16 11h2v1h-2zM19 11h6v1h-6zM6 12h3v1h-3zM10 12h1v1h-1zM12 12h2v1h-2zM15 12h1v1h-1zM17 12h1v1h-1zM20 12h1v1h-1zM23 12h1v1h-1zM25 12h3v1h-3zM30 12h3v1h-3zM5 13h1v1h-1zM7 13h1v1h-1zM11 13h2v1h-2zM15 13h1v1h-1zM17 13h1v1h-1zM20 13h1v1h-1zM22 13h1v1h-1zM24 13h3v1h-3zM28 13h1v1h-1zM32 13h1v1h-1zM5 14h3v1h-3zM10 14h1v1h-1zM12 14h1v1h-1zM14 14h1v1h-1zM16 14h1v1h-1zM19 14h1v1h-1zM23 14h1v1h-1zM25 14h4v1h-4zM30 14h1v1h-1zM7 15h2v1h-2zM11 15h1v1h-1zM13 15h1v1h-1zM15 15h1v1h-1zM17 15h1v1h-1zM20 15h2v1h-2zM23 15h6v1h-6zM31 15h1v1h-1zM5 16h2v1h-2zM8 16h3v1h-3zM12 16h1v1h-1zM15 16h2v1h-2zM18 16h3v1h-3zM22 16h2v1h-2zM25 16h1v1h-1zM27 16h1v1h-1zM29 16h4v1h-4zM5 17h5v1h-5zM14 17h4v1h-4zM21 17h1v1h-1zM23 17h4v1h-4zM28 17h2v1h-2zM32 17h1v1h-1zM10 18h1v1h-1zM13 18h1v1h-1zM15 18h1v1h-1zM17 18h1v1h-1zM22 18h1v1h-1zM26 18h2v1h-2zM31 18h1v1h-1zM4 19h2v1h-2zM7 19h2v1h-2zM12 19h8v1h-8zM24 19h1v1h-1zM26 19h1v1h-1zM28 19h2v1h-2zM7 20h1v1h-1zM10 20h1v1h-1zM15 20h2v1h-2zM21 20h2v1h-2zM24 20h2v1h-2zM27 20h1v1h-1zM29 20h4v1h-4zM4 21h1v1h-1zM7 21h2v1h-2zM12 21h2v1h-2zM15 21h4v1h-4zM21 21h1v1h-1zM25 21h1v1h-1zM27 21h2v1h-2zM31 21h2v1h-2zM4 22h1v1h-1zM10 22h2v1h-2zM13 22h2v1h-2zM20 22h1v1h-1zM24 22h1v1h-1zM26 22h1v1h-1zM29 22h1v1h-1zM4 23h1v1h-1zM6 23h1v1h-1zM8 23h1v1h-1zM11 23h1v1h-1zM14 23h1v1h-1zM16 23h1v1h-1zM18 23h1v1h-1zM21 23h1v1h-1zM26 23h1v1h-1zM28 23h1v1h-1zM32 23h1v1h-1zM4 24h1v1h-1zM7 24h1v1h-1zM9 24h2v1h-2zM12 24h8v1h-8zM21 24h1v1h-1zM24 24h5v1h-5zM30 24h2v1h-2zM12 25h2v1h-2zM15 25h2v1h-2zM18 25h4v1h-4zM23 25h2v1h-2zM28 25h2v1h-2zM31 25h2v1h-2zM4 26h7v1h-7zM13 26h6v1h-6zM20 26h5v1h-5zM26 26h1v1h-1zM28 26h1v1h-1zM4 27h1v1h-1zM10 27h1v1h-1zM15 27h1v1h-1zM18 27h2v1h-2zM22 27h3v1h-3zM28 27h2v1h-2zM32 27h1v1h-1zM4 28h1v1h-1zM6 28h3v1h-3zM10 28h1v1h-1zM12 28h1v1h-1zM14 28h2v1h-2zM17 28h2v1h-2zM20 28h3v1h-3zM24 28h7v1h-7zM4 29h1v1h-1zM6 29h3v1h-3zM10 29h1v1h-1zM12 29h8v1h-8zM22 29h4v1h-4zM27 29h1v1h-1zM29 29h2v1h-2zM4 30h1v1h-1zM6 30h3v1h-3zM10 30h1v1h-1zM12 30h1v1h-1zM15 30h1v1h-1zM19 30h1v1h-1zM23 30h6v1h-6zM30 30h2v1h-2zM4 31h1v1h-1zM10 31h1v1h-1zM13 31h1v1h-1zM15 31h4v1h-4zM20 31h3v1h-3zM26 31h1v1h-1zM28 31h2v1h-2zM31 31h1v1h-1zM4 32h7v1h-7zM14 32h1v1h-1zM16 32h1v1h-1zM19 32h2v1h-2zM23 32h4v1h-4zM28 32h3v1h-3z" fill="#14160f"/></svg>
+            <!-- /QR:site -->
+            <p class="qr__caption">Материалы и разборы</p>
+          </li>
+          <li class="qr">
+            <!-- QR:telegram -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" width="132" height="132" shape-rendering="crispEdges" role="img" aria-label="QR-код: https://t.me/pavelgord77">
+            <rect width="37" height="37" fill="#ffffff"/><path d="M4 4h7v1h-7zM12 4h3v1h-3zM16 4h3v1h-3zM20 4h2v1h-2zM23 4h2v1h-2zM26 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM12 5h1v1h-1zM16 5h3v1h-3zM20 5h3v1h-3zM24 5h1v1h-1zM26 5h1v1h-1zM32 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM13 6h3v1h-3zM21 6h1v1h-1zM23 6h2v1h-2zM26 6h1v1h-1zM28 6h3v1h-3zM32 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM12 7h1v1h-1zM17 7h1v1h-1zM22 7h2v1h-2zM26 7h1v1h-1zM28 7h3v1h-3zM32 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM12 8h1v1h-1zM15 8h3v1h-3zM22 8h1v1h-1zM26 8h1v1h-1zM28 8h3v1h-3zM32 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM12 9h1v1h-1zM16 9h3v1h-3zM20 9h5v1h-5zM26 9h1v1h-1zM32 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h7v1h-7zM13 11h1v1h-1zM16 11h2v1h-2zM19 11h1v1h-1zM21 11h4v1h-4zM7 12h1v1h-1zM10 12h1v1h-1zM14 12h1v1h-1zM17 12h1v1h-1zM19 12h1v1h-1zM21 12h4v1h-4zM27 12h3v1h-3zM31 12h2v1h-2zM4 13h1v1h-1zM7 13h3v1h-3zM11 13h1v1h-1zM17 13h3v1h-3zM21 13h1v1h-1zM25 13h2v1h-2zM29 13h1v1h-1zM32 13h1v1h-1zM6 14h1v1h-1zM9 14h2v1h-2zM15 14h1v1h-1zM18 14h3v1h-3zM22 14h3v1h-3zM26 14h1v1h-1zM28 14h4v1h-4zM5 15h1v1h-1zM8 15h1v1h-1zM11 15h2v1h-2zM14 15h3v1h-3zM23 15h1v1h-1zM25 15h4v1h-4zM30 15h2v1h-2zM4 16h1v1h-1zM6 16h1v1h-1zM8 16h1v1h-1zM10 16h2v1h-2zM13 16h1v1h-1zM16 16h2v1h-2zM20 16h2v1h-2zM24 16h1v1h-1zM26 16h2v1h-2zM4 17h1v1h-1zM7 17h1v1h-1zM12 17h1v1h-1zM16 17h2v1h-2zM19 17h1v1h-1zM22 17h2v1h-2zM25 17h1v1h-1zM27 17h1v1h-1zM29 17h1v1h-1zM4 18h2v1h-2zM7 18h2v1h-2zM10 18h3v1h-3zM14 18h1v1h-1zM16 18h1v1h-1zM21 18h1v1h-1zM25 18h2v1h-2zM31 18h2v1h-2zM5 19h1v1h-1zM7 19h1v1h-1zM14 19h2v1h-2zM17 19h2v1h-2zM21 19h4v1h-4zM26 19h2v1h-2zM32 19h1v1h-1zM7 20h1v1h-1zM10 20h1v1h-1zM12 20h1v1h-1zM14 20h1v1h-1zM16 20h1v1h-1zM19 20h1v1h-1zM21 20h5v1h-5zM31 20h2v1h-2zM6 21h2v1h-2zM9 21h1v1h-1zM12 21h1v1h-1zM15 21h1v1h-1zM17 21h3v1h-3zM22 21h1v1h-1zM25 21h3v1h-3zM29 21h4v1h-4zM4 22h1v1h-1zM9 22h3v1h-3zM13 22h1v1h-1zM15 22h5v1h-5zM24 22h2v1h-2zM27 22h6v1h-6zM6 23h4v1h-4zM12 23h1v1h-1zM17 23h3v1h-3zM23 23h1v1h-1zM29 23h1v1h-1zM31 23h2v1h-2zM4 24h1v1h-1zM6 24h2v1h-2zM9 24h4v1h-4zM14 24h6v1h-6zM21 24h1v1h-1zM24 24h7v1h-7zM12 25h1v1h-1zM14 25h1v1h-1zM16 25h2v1h-2zM20 25h1v1h-1zM22 25h1v1h-1zM24 25h1v1h-1zM28 25h1v1h-1zM31 25h2v1h-2zM4 26h7v1h-7zM15 26h1v1h-1zM17 26h3v1h-3zM22 26h1v1h-1zM24 26h1v1h-1zM26 26h1v1h-1zM28 26h3v1h-3zM4 27h1v1h-1zM10 27h1v1h-1zM14 27h1v1h-1zM16 27h1v1h-1zM19 27h1v1h-1zM22 27h1v1h-1zM24 27h1v1h-1zM28 27h1v1h-1zM30 27h1v1h-1zM4 28h1v1h-1zM6 28h3v1h-3zM10 28h1v1h-1zM14 28h2v1h-2zM17 28h1v1h-1zM21 28h2v1h-2zM24 28h6v1h-6zM31 28h2v1h-2zM4 29h1v1h-1zM6 29h3v1h-3zM10 29h1v1h-1zM12 29h6v1h-6zM20 29h7v1h-7zM28 29h2v1h-2zM32 29h1v1h-1zM4 30h1v1h-1zM6 30h3v1h-3zM10 30h1v1h-1zM13 30h2v1h-2zM17 30h2v1h-2zM23 30h2v1h-2zM28 30h1v1h-1zM30 30h1v1h-1zM32 30h1v1h-1zM4 31h1v1h-1zM10 31h1v1h-1zM13 31h1v1h-1zM15 31h1v1h-1zM18 31h1v1h-1zM20 31h1v1h-1zM22 31h1v1h-1zM24 31h1v1h-1zM26 31h2v1h-2zM31 31h1v1h-1zM4 32h7v1h-7zM15 32h1v1h-1zM18 32h2v1h-2zM21 32h2v1h-2zM24 32h3v1h-3zM28 32h2v1h-2zM31 32h1v1h-1z" fill="#14160f"/></svg>
+            <!-- /QR:telegram -->
+            <p class="qr__caption">Telegram</p>
+          </li>
+          <li class="qr">
+            <!-- QR:partner -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41" width="132" height="132" shape-rendering="crispEdges" role="img" aria-label="QR-код: https://torgi21.ru/r/PARTNER">
+            <rect width="41" height="41" fill="#ffffff"/><path d="M4 4h7v1h-7zM15 4h2v1h-2zM18 4h1v1h-1zM20 4h7v1h-7zM28 4h1v1h-1zM30 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM12 5h1v1h-1zM15 5h1v1h-1zM17 5h2v1h-2zM21 5h1v1h-1zM23 5h1v1h-1zM30 5h1v1h-1zM36 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM12 6h2v1h-2zM17 6h1v1h-1zM19 6h2v1h-2zM22 6h2v1h-2zM25 6h1v1h-1zM28 6h1v1h-1zM30 6h1v1h-1zM32 6h3v1h-3zM36 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM12 7h1v1h-1zM14 7h1v1h-1zM17 7h1v1h-1zM19 7h1v1h-1zM21 7h1v1h-1zM23 7h3v1h-3zM27 7h2v1h-2zM30 7h1v1h-1zM32 7h3v1h-3zM36 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM12 8h2v1h-2zM15 8h2v1h-2zM19 8h2v1h-2zM23 8h6v1h-6zM30 8h1v1h-1zM32 8h3v1h-3zM36 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM12 9h3v1h-3zM19 9h2v1h-2zM22 9h1v1h-1zM24 9h2v1h-2zM28 9h1v1h-1zM30 9h1v1h-1zM36 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM30 10h7v1h-7zM14 11h4v1h-4zM20 11h1v1h-1zM22 11h3v1h-3zM6 12h1v1h-1zM9 12h5v1h-5zM15 12h1v1h-1zM17 12h2v1h-2zM20 12h2v1h-2zM23 12h1v1h-1zM25 12h1v1h-1zM27 12h1v1h-1zM29 12h1v1h-1zM31 12h5v1h-5zM6 13h4v1h-4zM14 13h4v1h-4zM19 13h5v1h-5zM25 13h2v1h-2zM28 13h4v1h-4zM33 13h1v1h-1zM36 13h1v1h-1zM5 14h2v1h-2zM10 14h1v1h-1zM12 14h1v1h-1zM15 14h7v1h-7zM27 14h1v1h-1zM30 14h3v1h-3zM34 14h1v1h-1zM36 14h1v1h-1zM5 15h1v1h-1zM7 15h1v1h-1zM9 15h1v1h-1zM11 15h1v1h-1zM15 15h2v1h-2zM19 15h1v1h-1zM21 15h1v1h-1zM24 15h2v1h-2zM29 15h3v1h-3zM4 16h1v1h-1zM6 16h3v1h-3zM10 16h3v1h-3zM14 16h1v1h-1zM18 16h1v1h-1zM24 16h2v1h-2zM27 16h1v1h-1zM30 16h4v1h-4zM36 16h1v1h-1zM4 17h1v1h-1zM13 17h1v1h-1zM17 17h2v1h-2zM20 17h1v1h-1zM22 17h4v1h-4zM27 17h1v1h-1zM30 17h4v1h-4zM36 17h1v1h-1zM5 18h1v1h-1zM7 18h1v1h-1zM10 18h4v1h-4zM17 18h2v1h-2zM20 18h2v1h-2zM27 18h2v1h-2zM31 18h1v1h-1zM34 18h1v1h-1zM36 18h1v1h-1zM4 19h2v1h-2zM8 19h2v1h-2zM11 19h1v1h-1zM13 19h4v1h-4zM22 19h1v1h-1zM24 19h1v1h-1zM26 19h2v1h-2zM29 19h5v1h-5zM4 20h2v1h-2zM9 20h6v1h-6zM17 20h1v1h-1zM20 20h1v1h-1zM23 20h2v1h-2zM26 20h2v1h-2zM30 20h2v1h-2zM34 20h1v1h-1zM6 21h2v1h-2zM9 21h1v1h-1zM12 21h1v1h-1zM15 21h1v1h-1zM17 21h1v1h-1zM19 21h1v1h-1zM22 21h4v1h-4zM27 21h1v1h-1zM29 21h1v1h-1zM34 21h1v1h-1zM6 22h2v1h-2zM9 22h5v1h-5zM15 22h1v1h-1zM20 22h1v1h-1zM22 22h1v1h-1zM27 22h1v1h-1zM29 22h3v1h-3zM33 22h2v1h-2zM36 22h1v1h-1zM5 23h1v1h-1zM8 23h1v1h-1zM11 23h2v1h-2zM15 23h1v1h-1zM17 23h3v1h-3zM21 23h2v1h-2zM27 23h1v1h-1zM29 23h1v1h-1zM33 23h1v1h-1zM36 23h1v1h-1zM6 24h2v1h-2zM10 24h1v1h-1zM13 24h2v1h-2zM21 24h1v1h-1zM27 24h5v1h-5zM6 25h1v1h-1zM8 25h1v1h-1zM12 25h3v1h-3zM17 25h1v1h-1zM22 25h1v1h-1zM24 25h1v1h-1zM26 25h1v1h-1zM28 25h2v1h-2zM31 25h1v1h-1zM33 25h4v1h-4zM4 26h8v1h-8zM13 26h2v1h-2zM16 26h2v1h-2zM19 26h2v1h-2zM25 26h1v1h-1zM28 26h4v1h-4zM36 26h1v1h-1zM6 27h1v1h-1zM12 27h1v1h-1zM16 27h1v1h-1zM19 27h1v1h-1zM23 27h1v1h-1zM27 27h2v1h-2zM33 27h1v1h-1zM36 27h1v1h-1zM4 28h7v1h-7zM12 28h1v1h-1zM14 28h1v1h-1zM21 28h3v1h-3zM25 28h1v1h-1zM28 28h5v1h-5zM35 28h2v1h-2zM12 29h1v1h-1zM14 29h3v1h-3zM18 29h1v1h-1zM20 29h1v1h-1zM28 29h1v1h-1zM32 29h5v1h-5zM4 30h7v1h-7zM12 30h1v1h-1zM14 30h1v1h-1zM17 30h1v1h-1zM21 30h1v1h-1zM23 30h1v1h-1zM25 30h4v1h-4zM30 30h1v1h-1zM32 30h1v1h-1zM36 30h1v1h-1zM4 31h1v1h-1zM10 31h1v1h-1zM12 31h10v1h-10zM26 31h3v1h-3zM32 31h2v1h-2zM35 31h2v1h-2zM4 32h1v1h-1zM6 32h3v1h-3zM10 32h1v1h-1zM13 32h1v1h-1zM19 32h3v1h-3zM23 32h10v1h-10zM4 33h1v1h-1zM6 33h3v1h-3zM10 33h1v1h-1zM14 33h1v1h-1zM16 33h2v1h-2zM20 33h1v1h-1zM22 33h1v1h-1zM25 33h2v1h-2zM29 33h1v1h-1zM31 33h2v1h-2zM35 33h1v1h-1zM4 34h1v1h-1zM6 34h3v1h-3zM10 34h1v1h-1zM12 34h2v1h-2zM17 34h3v1h-3zM21 34h1v1h-1zM24 34h1v1h-1zM26 34h3v1h-3zM32 34h2v1h-2zM35 34h2v1h-2zM4 35h1v1h-1zM10 35h1v1h-1zM13 35h3v1h-3zM17 35h4v1h-4zM24 35h1v1h-1zM26 35h3v1h-3zM30 35h1v1h-1zM4 36h7v1h-7zM13 36h1v1h-1zM15 36h2v1h-2zM20 36h5v1h-5zM27 36h2v1h-2zM30 36h1v1h-1zM32 36h3v1h-3zM36 36h1v1h-1z" fill="#14160f"/></svg>
+            <!-- /QR:partner -->
+            <p class="qr__caption">Кабинет партнёра</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+<!-- ============================== КОНТАКТЫ -->
+    <!-- ЧЕРНОВИК: адрес почты заполнить (в config.json сейчас только
+         учётка mailer.py, публиковать её без согласования нельзя).
+         Форма подборки работает (GET /subscribe, TASK 9), письма по ней
+         пока не рассылаются — это следующий шаг после mailer.py. -->
+    <section id="kontakty" class="section section--alt">
+      <div class="shell shell--narrow">
+        <p class="eyebrow">Контакты</p>
+        <h2 class="section__title">Напишите — ответим в рабочий день</h2>
+
+        <div class="contact">
+          <div class="contact__item">
+            <span class="contact__label">Почта</span>
+            <a class="contact__value" href="mailto:pavel.gordon@gmail.com">pavel.gordon@gmail.com</a>
+          </div>
+          <div class="contact__item">
+            <span class="contact__label">Регионы</span>
+            <span class="contact__value">Чувашия, Марий Эл, Татарстан</span>
+          </div>
+          <div class="contact__item">
+            <span class="contact__label">Ответ</span>
+            <span class="contact__value">в течение рабочего дня</span>
+          </div>
+        </div>
+
+        <!-- форма подборки недели: GET /subscribe (payment.py) → строка в
+             subscriptions, tariff=digest, status=application; приём заявок
+             по почте подключим отдельно -->
+        <form class="form" action="/subscribe" method="get">
+          <label class="form__label" for="email">Пришлём подборку недели на почту</label>
+          <div class="form__row">
+            <input class="form__input" id="email" name="email" type="email"
+                   placeholder="вы@почта.рф" required>
+            <button class="btn btn--gold" type="submit">Получить</button>
+          </div>
+          <p class="form__hint">Без спама: одно письмо в неделю, отписка в один клик.</p>
+        </form>
+
+        <!-- Разбор лота — заявка на партнёрский разбор, а не подписка
+             на еженедельную рассылку, поэтому ведёт на партнёрскую
+             заявку в payment.py (тариф partner → запись в subscriptions,
+             предоплаты нет). Формулировка обещает ответ, а не
+             разбор в тот же день. -->
+        <form class="form" action="/pay" method="get">
+          <label class="form__label" for="review-email">
+            Разберём ваш лот: документы, цена и риски по шагам
+          </label>
+          <input type="hidden" name="tariff" value="partner">
+          <div class="form__row">
+            <input class="form__input" id="review-email" name="email" type="email"
+                   placeholder="вы@почта.рф" required>
+            <button class="btn btn--ghost" type="submit">Записаться на разбор</button>
+          </div>
+          <p class="form__hint">
+            Ответим в рабочий день и пришлём ссылку на кабинет партнёра.
+            Разбор бесплатный, 3 % начисляется только с закрытой сделки.
+          </p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer__row">
+      <p class="footer__copy">
+        © 2026 Проект «Торги» · Чувашия и соседние регионы
+      </p>
+      <nav class="footer__nav" aria-label="Разделы страницы в подвале">
+        <a href="#kak-rabotaet">Как это работает</a>
+        <a href="#kejs">Кейс</a>
+        <a href="#chto-eto">Что это</a>
+        <a href="#tarify">Тарифы</a>
+        <a href="#skachat">Скачать</a>
+        <a href="#materialy">Материалы</a>
+        <a href="#faq">Вопросы</a>
+        <a href="#kontakty">Контакты</a>
+      </nav>
+
+      <!-- Контакты в подвале. Адреса рабочие; почта продублирована в
+           секции «Контакты» выше, поэтому правится в обоих местах.
+           Звонок идёт на tel:, поэтому на телефоне кнопка звонит,
+           на десктопе — нет. -->
+      <div class="footer__contacts">
+        <div class="footer__contact">
+          <b>Telegram</b>
+          <a href="https://t.me/pavelgord77">@pavelgord77</a>
+        </div>
+        <div class="footer__contact">
+          <b>Почта</b>
+          <a href="mailto:pavel.gordon@gmail.com">pavel.gordon@gmail.com</a>
+        </div>
+        <div class="footer__contact">
+          <b>Телефон</b>
+          <a class="btn btn--ghost btn--call" href="tel:+79063880044">Позвонить</a>
+        </div>
+      </div>
+
+      <p class="footer__note">
+        Сайт — коммерческое предложение, а не юридическое заключение.
+        Условия конкретной сделки фиксируются договором.
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
